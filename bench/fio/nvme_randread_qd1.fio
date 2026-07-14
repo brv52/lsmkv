@@ -1,0 +1,27 @@
+; 4 KiB random reads at queue depth 1 through io_uring with O_DIRECT —
+; the device-latency floor for an lsmkv point lookup that misses the block
+; cache (one aligned 4 KiB data-block read).
+;
+;   FILENAME=/dev/nvme0n1 fio bench/fio/nvme_randread_qd1.fio       (raw device, read-only)
+;   FILENAME=/mnt/nvme/fio.dat fio bench/fio/nvme_randread_qd1.fio  (file on the target fs)
+[global]
+ioengine=io_uring
+direct=1
+rw=randread
+bs=4k
+iodepth=1
+numjobs=1
+filename=${FILENAME}
+size=8g
+time_based=1
+runtime=60
+ramp_time=5
+norandommap=1
+randrepeat=0
+fixedbufs=1
+registerfiles=1
+hipri=0
+group_reporting=1
+percentile_list=50:90:99:99.9:99.99
+
+[randread-qd1]

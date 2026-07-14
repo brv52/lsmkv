@@ -1,0 +1,29 @@
+; 4 KiB random reads at queue depth 32 through io_uring with O_DIRECT —
+; the throughput ceiling for concurrent lookups / batched submissions
+; (UringBackend::Submit with many requests in one io_uring_enter).
+;
+;   FILENAME=/dev/nvme0n1 fio bench/fio/nvme_randread_qd32.fio
+;   FILENAME=/mnt/nvme/fio.dat fio bench/fio/nvme_randread_qd32.fio
+[global]
+ioengine=io_uring
+direct=1
+rw=randread
+bs=4k
+iodepth=32
+iodepth_batch_submit=8
+iodepth_batch_complete_min=1
+numjobs=4
+filename=${FILENAME}
+size=8g
+time_based=1
+runtime=60
+ramp_time=5
+norandommap=1
+randrepeat=0
+fixedbufs=1
+registerfiles=1
+sqthread_poll=0
+group_reporting=1
+percentile_list=50:90:99:99.9:99.99
+
+[randread-qd32]
